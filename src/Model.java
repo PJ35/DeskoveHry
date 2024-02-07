@@ -8,6 +8,7 @@ public class Model {
         seznamDeskovek.add(new Deskovka("Carcassonne", true, 3));
         seznamDeskovek.add(new Deskovka("Catan", false, 2));
         seznamDeskovek.add(new Deskovka("Ticket to Ride", true, 1));
+        seznamDeskovek.add(new Deskovka("Pandemic", true, 3));
     }
 
     public static Deskovka getDeskovka(int index) {
