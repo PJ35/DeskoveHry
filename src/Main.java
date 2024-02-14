@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.util.Scanner;
 
 public class Main {
+
+    public static int zaklad = 0;
     public static void main(String[] args) {
         Model m = new Model();
         String soubor = "deskovky.txt";

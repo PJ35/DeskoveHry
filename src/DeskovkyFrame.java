@@ -20,12 +20,13 @@ public class DeskovkyFrame extends JFrame{
     public DeskovkyFrame() {
         setContentPane(mainPanel);
         setTitle("Deskovky");
-        setSize(400, 200);
+        setSize(400, 220);
         setToTheMiddle(this);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         if(Model.getSize() > 0) {
             zobrazDeskovku(index);
         }
+        iniMenu();
         worstRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -90,6 +91,47 @@ public class DeskovkyFrame extends JFrame{
         });
     }
 
+    private void iniMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+        JMenu file = new JMenu("File");
+        menuBar.add(file);
+        JMenu menu = new JMenu("Menu");
+        menuBar.add(menu);
+        JMenuItem menuItem = new JMenuItem("Přidat");
+        menu.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Model.addDeskovka(new Deskovka("Nová deskovka", false, 0));
+                index = Model.getSize() - 1;
+                zobrazDeskovku(index);
+                updateFile();
+            }
+        });
+        menuItem = new JMenuItem("Odebrat");
+        menu.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Model.removeDeskovka(index);
+                if (index > 0) {
+                    index--;
+                }
+                if (Model.getSize() > 0) {
+                    zobrazDeskovku(index);
+                } else {
+                    name.setText("");
+                    boughtCheckBox.setSelected(false);
+                    worstRadioButton.setSelected(false);
+                    middleRadioButton.setSelected(false);
+                    bestRadioButton.setSelected(false);
+                }
+                updateFile();
+            }
+        });
+    }
+
     public void zobrazDeskovku(int index) {
         Deskovka d = Model.getDeskovka(index);
         name.setText(d.getName());
@@ -139,7 +181,7 @@ public class DeskovkyFrame extends JFrame{
         String soubor = "deskovky.txt";
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(soubor)))) {
             for (int i = 0; i < Model.getSize(); i++) {
-                if (i > 3) {
+                if (i > Main.zaklad-1) {
                     Deskovka d = Model.getDeskovka(i);
                     writer.println(d.getName() + ";" + d.isBought() + ";" + d.getRating());
                 }
