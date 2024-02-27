@@ -12,20 +12,21 @@ public class DeskovkyFrame extends JFrame{
     private JRadioButton middleRadioButton;
     private JRadioButton bestRadioButton;
     private JButton previousButton;
-    private JButton saveButton;
     private JButton nextButton;
-    private JButton reloadButton;
     int index = 0;
+    String soubor = "deskovky.txt";
 
     public DeskovkyFrame() {
+        loadFile(soubor);
         setContentPane(mainPanel);
         setTitle("Deskovky");
         setSize(400, 220);
         setToTheMiddle(this);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        if(Model.getSize() > 0) {
-            zobrazDeskovku(index);
+        if(Model.getSize() == 0) {
+            addBlankPage();
         }
+        zobrazDeskovku(index);
         iniMenu();
         worstRadioButton.addActionListener(new ActionListener() {
             @Override
@@ -74,21 +75,37 @@ public class DeskovkyFrame extends JFrame{
                 }
             }
         });
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Model.setDeskovka(index, new Deskovka(name.getText(), boughtCheckBox.isSelected(), worstRadioButton.isSelected() ? 1
-                        : middleRadioButton.isSelected() ? 2 : bestRadioButton.isSelected() ? 3 : 0));
-                updateFile();
-                JOptionPane.showMessageDialog(null, "Deskovka byla uložena.");
+    }
+
+    private void loadFile(String soubor) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(soubor))) {
+            String radek;
+            while ((radek = reader.readLine()) != null) {
+                String[] polozky = radek.split(";");
+                Model.addDeskovka(new Deskovka(polozky[0], Boolean.parseBoolean(polozky[1]), Integer.parseInt(polozky[2])));
             }
-        });
-        reloadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                zobrazDeskovku(index);
-            }
-        });
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Soubor "+soubor+" nenalezen!\n"+e.getMessage());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Chyba při čtení ze souboru "+soubor+":\n"+e.getMessage());
+        }
+    }
+
+    public void setToTheMiddle(JFrame frame) {
+        GraphicsConfiguration gc = frame.getGraphicsConfiguration();
+        Rectangle bounds = gc.getBounds();
+        Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
+        Rectangle effectiveScreenArea = new Rectangle();
+
+        effectiveScreenArea.x = bounds.x + screenInsets.left;
+        effectiveScreenArea.y = bounds.y + screenInsets.top;
+        effectiveScreenArea.height = bounds.height - screenInsets.top - screenInsets.bottom;
+        effectiveScreenArea.width = bounds.width - screenInsets.left - screenInsets.right;
+
+        // Center:
+        int middleX = effectiveScreenArea.x + (effectiveScreenArea.width - frame.getWidth()) / 2;
+        int middleY = effectiveScreenArea.y + (effectiveScreenArea.height - frame.getHeight()) / 2;
+        frame.setLocation(middleX, middleY);
     }
 
     private void iniMenu() {
@@ -96,9 +113,28 @@ public class DeskovkyFrame extends JFrame{
         setJMenuBar(menuBar);
         JMenu file = new JMenu("File");
         menuBar.add(file);
+        JMenuItem menuItem = new JMenuItem("Uložit");
+        file.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Model.setDeskovka(index, new Deskovka(name.getText(), boughtCheckBox.isSelected(), worstRadioButton.isSelected() ? 1
+                        : middleRadioButton.isSelected() ? 2 : bestRadioButton.isSelected() ? 3 : 0));
+                updateFile(soubor);
+                JOptionPane.showMessageDialog(null, "Deskovka byla uložena.");
+            }
+        });
+        menuItem = new JMenuItem("Načíst");
+        file.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                zobrazDeskovku(index);
+            }
+        });
         JMenu menu = new JMenu("Menu");
         menuBar.add(menu);
-        JMenuItem menuItem = new JMenuItem("Přidat");
+        menuItem = new JMenuItem("Přidat");
         menu.add(menuItem);
         menuItem.addActionListener(new ActionListener() {
             @Override
@@ -106,7 +142,7 @@ public class DeskovkyFrame extends JFrame{
                 Model.addDeskovka(new Deskovka("Nová deskovka", false, 0));
                 index = Model.getSize() - 1;
                 zobrazDeskovku(index);
-                updateFile();
+                updateFile(soubor);
             }
         });
         menuItem = new JMenuItem("Odebrat");
@@ -121,15 +157,16 @@ public class DeskovkyFrame extends JFrame{
                 if (Model.getSize() > 0) {
                     zobrazDeskovku(index);
                 } else {
-                    name.setText("");
-                    boughtCheckBox.setSelected(false);
-                    worstRadioButton.setSelected(false);
-                    middleRadioButton.setSelected(false);
-                    bestRadioButton.setSelected(false);
+                    addBlankPage();
+                    zobrazDeskovku(index);
                 }
-                updateFile();
+                updateFile(soubor);
             }
         });
+    }
+
+    private void addBlankPage() {
+        Model.addDeskovka(new Deskovka("", false, 0));
     }
 
     public void zobrazDeskovku(int index) {
@@ -160,25 +197,7 @@ public class DeskovkyFrame extends JFrame{
         }
     }
 
-    public void setToTheMiddle(JFrame frame) {
-        GraphicsConfiguration gc = frame.getGraphicsConfiguration();
-        Rectangle bounds = gc.getBounds();
-        Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
-        Rectangle effectiveScreenArea = new Rectangle();
-
-        effectiveScreenArea.x = bounds.x + screenInsets.left;
-        effectiveScreenArea.y = bounds.y + screenInsets.top;
-        effectiveScreenArea.height = bounds.height - screenInsets.top - screenInsets.bottom;
-        effectiveScreenArea.width = bounds.width - screenInsets.left - screenInsets.right;
-
-        // Center:
-        int middleX = effectiveScreenArea.x + (effectiveScreenArea.width - frame.getWidth()) / 2;
-        int middleY = effectiveScreenArea.y + (effectiveScreenArea.height - frame.getHeight()) / 2;
-        frame.setLocation(middleX, middleY);
-    }
-
-    public void updateFile() {
-        String soubor = "deskovky.txt";
+    public void updateFile(String soubor) {
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(soubor)))) {
             for (int i = 0; i < Model.getSize(); i++) {
                 if (i > Main.zaklad-1) {
@@ -186,11 +205,10 @@ public class DeskovkyFrame extends JFrame{
                     writer.println(d.getName() + ";" + d.isBought() + ";" + d.getRating());
                 }
             }
-            writer.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Soubor "+soubor+" nenalezen!\n"+e.getMessage());
+            JOptionPane.showMessageDialog(null, "Soubor "+soubor+" nenalezen!\n"+e.getMessage());
         } catch (IOException e) {
-            System.out.println("Chyba při zápisu do souboru "+soubor+":\n"+e.getMessage());
+            JOptionPane.showMessageDialog(null, "Chyba při zápisu do souboru "+soubor+":\n"+e.getMessage());
         }
     }
 }
