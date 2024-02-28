@@ -1,15 +1,12 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Model {
     private static List<Deskovka> seznamDeskovek = new ArrayList<>();
 
     public Model() {
-        seznamDeskovek.add(new Deskovka("Carcassonne", true, 3));
-        seznamDeskovek.add(new Deskovka("Catan", false, 2));
-        seznamDeskovek.add(new Deskovka("Ticket to Ride", true, 4));
-        seznamDeskovek.add(new Deskovka("Pandemic", true, 3));
-        Main.zaklad = seznamDeskovek.size();
+
     }
 
     public static Deskovka getDeskovka(int index) {
@@ -30,5 +27,9 @@ public class Model {
 
     public static int getSize() {
         return seznamDeskovek.size();
+    }
+
+    public static void sort() {
+        seznamDeskovek.sort(Comparator.comparing(Deskovka::getName));
     }
 }

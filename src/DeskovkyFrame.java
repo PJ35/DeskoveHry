@@ -17,6 +17,15 @@ public class DeskovkyFrame extends JFrame{
     String soubor = "deskovky.txt";
 
     public DeskovkyFrame() {
+        JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Textové soubory", "txt"));
+        int result = fc.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            soubor = fc.getSelectedFile().getAbsolutePath();
+            JOptionPane.showMessageDialog(null, "Byl vybrán soubor "+soubor);
+        } else {
+            JOptionPane.showMessageDialog(null, "Nebyl vybrán žádný soubor.\nByl vybrán výchozí soubor "+soubor);
+        }
         loadFile(soubor);
         setContentPane(mainPanel);
         setTitle("Deskovky");
@@ -111,7 +120,7 @@ public class DeskovkyFrame extends JFrame{
     private void iniMenu() {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
-        JMenu file = new JMenu("File");
+        JMenu file = new JMenu("Soubor");
         menuBar.add(file);
         JMenuItem menuItem = new JMenuItem("Uložit");
         file.add(menuItem);
@@ -132,7 +141,7 @@ public class DeskovkyFrame extends JFrame{
                 zobrazDeskovku(index);
             }
         });
-        JMenu menu = new JMenu("Menu");
+        JMenu menu = new JMenu("Akce");
         menuBar.add(menu);
         menuItem = new JMenuItem("Přidat");
         menu.add(menuItem);
@@ -161,6 +170,16 @@ public class DeskovkyFrame extends JFrame{
                     zobrazDeskovku(index);
                 }
                 updateFile(soubor);
+            }
+        });
+        menuItem = new JMenuItem("Seřadit");
+        menu.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Model.sort();
+                updateFile(soubor);
+                JOptionPane.showMessageDialog(null, "Seznam byl seřazen.");
             }
         });
     }
@@ -200,10 +219,8 @@ public class DeskovkyFrame extends JFrame{
     public void updateFile(String soubor) {
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(soubor)))) {
             for (int i = 0; i < Model.getSize(); i++) {
-                if (i > Main.zaklad-1) {
-                    Deskovka d = Model.getDeskovka(i);
-                    writer.println(d.getName() + ";" + d.isBought() + ";" + d.getRating());
-                }
+                Deskovka d = Model.getDeskovka(i);
+                writer.println(d.getName() + ";" + d.isBought() + ";" + d.getRating());
             }
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null, "Soubor "+soubor+" nenalezen!\n"+e.getMessage());
