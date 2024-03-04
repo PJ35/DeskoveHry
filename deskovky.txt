@@ -1,1 +1,5 @@
 Dostihy a sázky;false;1
+Carcassonne;true;3
+Catan;false;2
+Ticket to Ride;true;0
+Pandemic;true;3
