@@ -30,9 +30,6 @@ public class Deskovka {
     }
 
     public void setRating(int rating) {
-        if (rating < 1 || rating > 3) {
-            throw new IllegalArgumentException("Rating must be between 1 and 3");
-        }
         this.rating = rating;
     }
 }
