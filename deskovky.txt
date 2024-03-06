@@ -1,1 +1,6 @@
+7 Wonders;false;3
+Carcassonne;true;3
+Catan;false;2
 Dostihy a sázky;false;1
+Pandemic;true;3
+Ticket to Ride;true;4
