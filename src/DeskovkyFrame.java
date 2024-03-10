@@ -176,9 +176,11 @@ public class DeskovkyFrame extends JFrame{
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(null, "Opravdu chcete obnovit stránku?", "Obnovit",
-                        JOptionPane.YES_NO_OPTION);
+                int result = JOptionPane.showConfirmDialog(null, "Opravdu chcete obnovit soubor?", "Obnovit",
+                    JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
+                    loadFile(soubor);
+                    index = 0;
                     zobrazDeskovku(index);
                 }
             }
@@ -230,6 +232,18 @@ public class DeskovkyFrame extends JFrame{
                 Model.sort();
                 updateFile(soubor);
                 JOptionPane.showMessageDialog(null, "Seznam byl seřazen.");
+            }
+        });
+        menuItem = new JMenuItem("Obnovit");
+        menu.add(menuItem);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int result = JOptionPane.showConfirmDialog(null, "Opravdu chcete obnovit stránku?", "Obnovit",
+                        JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    zobrazDeskovku(index);
+                }
             }
         });
         menu = new JMenu("Souhrn");
