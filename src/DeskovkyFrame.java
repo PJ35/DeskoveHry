@@ -28,27 +28,10 @@ public class DeskovkyFrame extends JFrame{
         }
         zobrazDeskovku(index);
         iniMenu();
-        worstRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                middleRadioButton.setSelected(false);
-                bestRadioButton.setSelected(false);
-            }
-        });
-        middleRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                worstRadioButton.setSelected(false);
-                bestRadioButton.setSelected(false);
-            }
-        });
-        bestRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                worstRadioButton.setSelected(false);
-                middleRadioButton.setSelected(false);
-            }
-        });
+        ButtonGroup group = new ButtonGroup();
+        group.add(worstRadioButton);
+        group.add(middleRadioButton);
+        group.add(bestRadioButton);
         previousButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -279,21 +262,9 @@ public class DeskovkyFrame extends JFrame{
         name.setText(d.getName());
         boughtCheckBox.setSelected(d.isBought());
         switch (d.getRating()) {
-            case 1 -> {
-                worstRadioButton.setSelected(true);
-                middleRadioButton.setSelected(false);
-                bestRadioButton.setSelected(false);
-            }
-            case 2 -> {
-                worstRadioButton.setSelected(false);
-                middleRadioButton.setSelected(true);
-                bestRadioButton.setSelected(false);
-            }
-            case 3 -> {
-                worstRadioButton.setSelected(false);
-                middleRadioButton.setSelected(false);
-                bestRadioButton.setSelected(true);
-            }
+            case 1 -> worstRadioButton.setSelected(true);
+            case 2 -> middleRadioButton.setSelected(true);
+            case 3 -> bestRadioButton.setSelected(true);
             default -> {
                 worstRadioButton.setSelected(false);
                 middleRadioButton.setSelected(false);
